@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1732872754 source:d:\coding\cpp\hotel&customer\hotel&customer.cpp
+	"header.h"
+
+1732706045 source:d:\coding\cpp\hotel&customer\main.cpp
+	"header.h"
+
+1732706029 d:\coding\cpp\hotel&customer\header.h
+	<iostream>
+
+1734260597 source:c:\users\dafif\onedrive\documents\kuliah\semester 3\struktur data\tubes\hotel&customer\main.cpp
+	"header.h"
+
+1734262397 c:\users\dafif\onedrive\documents\kuliah\semester 3\struktur data\tubes\hotel&customer\header.h
+	<iostream>
+
+1734267406 source:c:\users\dafif\onedrive\documents\kuliah\semester 3\struktur data\tubes\hotel&customer\hotel&customer.cpp
+	"header.h"
+
