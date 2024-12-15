@@ -17,7 +17,7 @@ using namespace std;
 
 //parent
 struct customer{
-    string nama, telp, gender, suite, tglCi, tglCo;
+    string nama, telp, gender, tglCi, tglCo;
     int usia;
     bool nikah, ktp;
 };

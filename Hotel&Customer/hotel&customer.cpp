@@ -42,8 +42,6 @@ void menuTambah(ListCustomer &Lc, ListHotel &Lh, ListRelasi &Lr){
                 cin >> dataC.nikah;
                 cout << "KTP: ";
                 cin >> dataC.ktp;
-                cout << "Suite: ";
-                cin >> dataC.suite;
                 cout << "Tanggal Check-in: ";
                 cin >> dataC.tglCi;
                 cout << "Tanggal Check-out: ";
@@ -102,7 +100,7 @@ void menuHapus(ListCustomer &Lc, ListHotel &Lh, ListRelasi &Lr){
     int in, i, n;
     adrCustomer C, precC;
     adrHotel H, precH;
-    adrRelasi R;
+    adrRelasi R, prec;
 
     cout << "=============== Hotel Asgard ===============" << endl;
     cout << "| 1. Hapus Customer                        |" << endl;
@@ -122,8 +120,8 @@ void menuHapus(ListCustomer &Lc, ListHotel &Lh, ListRelasi &Lr){
             cout << "Input: ";
             cin >> in;
             if (in == 1){
-            deleteFirstCustomer(Lc, C);
-            cout << "Data berhasil dihapus" << endl;
+                deleteFirstCustomer(Lc, C);
+                cout << "Data berhasil dihapus" << endl;
             }else if (in == 2){
                 deleteLastCustomer(Lc, C);
                 cout << "Data berhasil dihapus" << endl;
@@ -143,6 +141,25 @@ void menuHapus(ListCustomer &Lc, ListHotel &Lh, ListRelasi &Lr){
                     deleteAfterCustomer(Lc, precC, C);
                 }
             }
+
+            R = firstR(Lr), prec;
+            while (R != nil && parent(R) != C){
+                prec = R;
+                R = nextR(R);
+            }
+
+            if (R == nil){
+                cout << endl;
+            }else {
+                if (nextR(R) == nil){
+                    deleteLastRelasi(Lr, R);
+                }else if (R == firstR(Lr)){
+                    deleteFirstRelasi(Lr, R);
+                }else {
+                    deleteAfterRelasi(Lr, prec, R);
+                }
+            }
+
         break;
 
         //HAPUS DATA HOTEL
@@ -174,6 +191,24 @@ void menuHapus(ListCustomer &Lc, ListHotel &Lh, ListRelasi &Lr){
                     cout << "Data tidak ditemukan" << endl;
                 }else {
                     deleteAfterHotel(Lh, precH, H);
+                }
+            }
+
+            R = firstR(Lr), prec;
+            while (R != nil && child(R) != H){
+                prec = R;
+                R = nextR(R);
+            }
+
+            if (R == nil){
+                cout << endl;
+            }else {
+                if (nextR(R) == nil){
+                    deleteLastRelasi(Lr, R);
+                }else if (R == firstR(Lr)){
+                    deleteFirstRelasi(Lr, R);
+                }else {
+                    deleteAfterRelasi(Lr, prec, R);
                 }
             }
         break;
@@ -248,8 +283,6 @@ void menuCari(ListCustomer Lc, ListHotel Lh, ListRelasi Lr){
                 } else {
                     cout << "KTP         : Belum Memiliki KTP" << endl;
                 }
-
-                cout << "Suite       : " << infoC(C).suite << endl;
                 cout << "Tanggal CI  : " << infoC(C).tglCi << endl;
                 cout << "Tanggal CO  : " << infoC(C).tglCo << endl;
             }
@@ -319,7 +352,6 @@ void menuShow(ListCustomer Lc, ListHotel Lh, ListRelasi Lr){
         case 1:
             cout << "=============== Hotel Asgard ===============" << endl;
             showDataCustomer(Lc);
-            cout << infoC(lastC(Lc)).nama << endl;
         break;
 
         case 2:
@@ -681,6 +713,7 @@ void deleteFirstCustomer(ListCustomer &Lc, adrCustomer &C){
 /*{IS: terdefinisi list customer yang mungkin kosong atau tidak dan alamat yang akan menyimpan data customer
    FS: menghapus alamat pertama pada list customer dan disimpan di pointer C
 }*/
+
     if(firstC(Lc) == nil){
         cout << "List kosong" << endl;
     } else if (firstC(Lc) == lastC(Lc)){
@@ -693,6 +726,7 @@ void deleteFirstCustomer(ListCustomer &Lc, adrCustomer &C){
         nextC(C) = nil;
         prevC(firstC(Lc)) = nil;
     }
+
 };
 
 void deleteLastCustomer(ListCustomer &Lc, adrCustomer &C){
@@ -805,12 +839,10 @@ void deleteRelasi(ListRelasi &Lr, adrCustomer C, adrHotel H, adrRelasi &R){
 
         if (q == firstR(Lr)){
             deleteFirstRelasi(Lr, R);
-            cout << "1" << endl;
         }else if (q == nil) {
             cout << "Tidak ada relasi yang sesuai" << endl;
         }else if (nextR(q) == nil){
             deleteLastRelasi(Lr, R);
-            cout << "2" << endl;
         }else {
             r = firstR(Lr);
 
@@ -819,7 +851,6 @@ void deleteRelasi(ListRelasi &Lr, adrCustomer C, adrHotel H, adrRelasi &R){
             }
 
             deleteAfterRelasi(Lr, r, R);
-            cout << "3" << endl;
         }
     }
 };
@@ -1184,24 +1215,27 @@ int countChildWithoutParent(ListHotel Lh, ListRelasi Lr){
 }*/
 
     int jumlah = 0;
-    bool empty;
-    adrRelasi R;
-    adrHotel H = firstH(Lh);
+    bool emptyH;
+    adrRelasi CurrentR;
+    adrHotel CurrentH = firstH(Lh);
 
-    while (H != nil) {
-        empty = true;
-        R = firstR(Lr);
-
-        while (R != nil && !empty){
-            if (child(R) == H) {
-                empty = false;
+    if (firstH(Lh) == nil) {
+        cout << "Tidak ada data Hotel." << endl;
+    }else {
+        while (CurrentH!= nil) {
+            emptyH = false;
+            CurrentR = firstR(Lr);
+            while (CurrentR != nil) {
+                if (child(CurrentR) == CurrentH) {
+                    emptyH = true;
+                }
+                CurrentR = nextR(CurrentR);
             }
-            R = nextR(R);
+            if (!emptyH) {
+                jumlah++;
+            }
+            CurrentH= nextH(CurrentH);
         }
-        if (empty) {
-            jumlah++;
-        }
-        H = nextH(H);
     }
     return jumlah;
 }
